@@ -17,6 +17,9 @@
 # Misc
 .DS_Store
 *.pem
+salva-tasks.md
+requirements
+
 
 # Debug
 npm-debug.log*
