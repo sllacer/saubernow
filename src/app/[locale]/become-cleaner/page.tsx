@@ -5,6 +5,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { User, MapPin, Euro, Upload, Languages } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 type CleanerData = {
   personalInfo: {
@@ -44,10 +46,29 @@ export default function BecomeCleanerPage() {
     description: '',
     documents: {}
   });
+  const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({});
 
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+
+  const validatePersonalField = (field: keyof CleanerData['personalInfo'], value: string): string => {
+    switch (field) {
+      case 'name':
+        if (!value.trim()) return t('validation.required');
+        if (value.trim().length < 2) return t('validation.name_too_short');
+        break;
+      case 'email':
+        if (!value.trim()) return t('validation.required');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return t('validation.email_invalid');
+        break;
+      case 'phone':
+        if (value.trim() && !isValidPhoneNumber(value)) return t('validation.phone_invalid');
+        break;
+    }
+    return '';
+  };
 
   const updatePersonalInfo = (field: keyof CleanerData['personalInfo'], value: string) => {
     setCleanerData(prev => ({
@@ -57,6 +78,19 @@ export default function BecomeCleanerPage() {
         [field]: value
       }
     }));
+    
+    // Clear field error when user starts typing
+    const errorKey = `personalInfo.${field}`;
+    if (fieldErrors[errorKey]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [errorKey]: ''
+      }));
+    }
+  };
+
+  const handlePhoneChange = (value: string | undefined) => {
+    updatePersonalInfo('phone', value || '');
   };
 
   const updateWorkInfo = (field: keyof CleanerData['workInfo'], value: any) => {
@@ -146,7 +180,7 @@ export default function BecomeCleanerPage() {
 
           <div className="bg-white rounded-lg shadow-md p-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-8">
-              Als Reinigungskraft registrieren
+              {t('auth.register_as_cleaner')}
             </h1>
 
             <form onSubmit={handleSubmit}>
@@ -155,47 +189,65 @@ export default function BecomeCleanerPage() {
                 <div className="space-y-6">
                   <div className="text-center mb-6">
                     <User className="mx-auto text-primary-600 mb-3" size={48} />
-                    <h2 className="text-xl font-semibold">Persönliche Informationen</h2>
+                    <h2 className="text-xl font-semibold">{t('auth.personal_information')}</h2>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Vollständiger Name
+                      {t('auth.full_name')}
                     </label>
                     <input
                       type="text"
                       value={cleanerData.personalInfo.name}
                       onChange={(e) => updatePersonalInfo('name', e.target.value)}
-                      className="input-field"
-                      required
+                      className={`input-field ${
+                        fieldErrors['personalInfo.name'] ? 'border-red-300' : ''
+                      }`}
+                      onBlur={() => {
+                        const error = validatePersonalField('name', cleanerData.personalInfo.name);
+                        if (error) setFieldErrors(prev => ({...prev, 'personalInfo.name': error}));
+                      }}
                     />
+                    {fieldErrors['personalInfo.name'] && (
+                      <p className="mt-1 text-sm text-red-600">{fieldErrors['personalInfo.name']}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      E-Mail-Adresse
+                      {t('common.email')}
                     </label>
                     <input
                       type="email"
                       value={cleanerData.personalInfo.email}
                       onChange={(e) => updatePersonalInfo('email', e.target.value)}
-                      className="input-field"
-                      required
+                      className={`input-field ${
+                        fieldErrors['personalInfo.email'] ? 'border-red-300' : ''
+                      }`}
+                      onBlur={() => {
+                        const error = validatePersonalField('email', cleanerData.personalInfo.email);
+                        if (error) setFieldErrors(prev => ({...prev, 'personalInfo.email': error}));
+                      }}
                     />
+                    {fieldErrors['personalInfo.email'] && (
+                      <p className="mt-1 text-sm text-red-600">{fieldErrors['personalInfo.email']}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Telefonnummer
+                      {t('auth.phone_optional')}
                     </label>
-                    <input
-                      type="tel"
+                    <PhoneInput
                       value={cleanerData.personalInfo.phone}
-                      onChange={(e) => updatePersonalInfo('phone', e.target.value)}
-                      className="input-field"
-                      placeholder="+43 ..."
-                      required
+                      onChange={handlePhoneChange}
+                      defaultCountry="AT"
+                      placeholder="Enter phone number"
+                      className="phone-input"
                     />
+                    {fieldErrors['personalInfo.phone'] && (
+                      <p className="mt-1 text-sm text-red-600">{fieldErrors['personalInfo.phone']}</p>
+                    )}
                   </div>
 
                   <div className="flex justify-end">

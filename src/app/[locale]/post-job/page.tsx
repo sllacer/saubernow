@@ -284,7 +284,7 @@ export default function PostJobPage() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Name
+                      {t('common.name')}
                     </label>
                     <input
                       type="text"
@@ -323,10 +323,10 @@ export default function PostJobPage() {
 
                   {/* Job Summary */}
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-3">Zusammenfassung</h3>
+                    <h3 className="font-semibold text-gray-900 mb-3">{t('common.summary')}</h3>
                     <div className="space-y-2 text-sm text-gray-600">
-                      <p><strong>Wohnung:</strong> {apartmentSizes.find(s => s.value === jobData.apartmentSize)?.label}</p>
-                      <p><strong>Reinigungsart:</strong> {cleaningTypes.find(t => t.value === jobData.cleaningType)?.label}</p>
+                      <p><strong>{t('common.apartment')}:</strong> {apartmentSizes.find(s => s.value === jobData.apartmentSize)?.label}</p>
+                      <p><strong>{t('common.cleaning_type_label')}:</strong> {cleaningTypes.find(t => t.value === jobData.cleaningType)?.label}</p>
                       <p><strong>Häufigkeit:</strong> {frequencies.find(f => f.value === jobData.frequency)?.label}</p>
                       <p><strong>Ort:</strong> {jobData.location}</p>
                       {jobData.preferredDate && <p><strong>Gewünschtes Datum:</strong> {jobData.preferredDate}</p>}

@@ -53,6 +53,45 @@
     "back": "Back",
     "phone": "Phone",
     "email": "Email",
-    "address": "Address"
+    "address": "Address",
+    "name": "Name",
+    "summary": "Summary",
+    "apartment": "Apartment",
+    "cleaning_type_label": "Cleaning Type"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email_invalid": "Please enter a valid email address",
+    "phone_invalid": "Please enter a valid phone number",
+    "password_too_short": "Password must be at least 8 characters long",
+    "password_weak": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+    "passwords_mismatch": "Passwords do not match",
+    "terms_required": "You must accept the terms and conditions",
+    "name_too_short": "Name must be at least 2 characters long"
+  },
+  "auth": {
+    "signup_title": "Create Account",
+    "signup_subtitle": "Join the SauberNow Community",
+    "register_as": "I want to register as:",
+    "customer": "Customer",
+    "cleaner": "Cleaner",
+    "book_cleaning": "Book cleaning",
+    "find_jobs": "Find jobs",
+    "full_name": "Full Name",
+    "phone_optional": "Phone Number (optional)",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "password_hint": "At least 8 characters",
+    "repeat_password": "Repeat password",
+    "accept_terms": "I accept the",
+    "terms_conditions": "Terms and Conditions",
+    "privacy_policy": "Privacy Policy",
+    "and": "and",
+    "create_account": "Create Account",
+    "creating_account": "Creating...",
+    "already_have_account": "Already have an account?",
+    "login_here": "Login here",
+    "personal_information": "Personal Information",
+    "register_as_cleaner": "Register as Cleaner"
   }
 }

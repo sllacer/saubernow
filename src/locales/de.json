@@ -53,6 +53,45 @@
     "back": "Zurück",
     "phone": "Telefon",
     "email": "E-Mail",
-    "address": "Adresse"
+    "address": "Adresse",
+    "name": "Name",
+    "summary": "Zusammenfassung",
+    "apartment": "Wohnung",
+    "cleaning_type_label": "Reinigungsart"
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich",
+    "email_invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "phone_invalid": "Bitte geben Sie eine gültige Telefonnummer ein",
+    "password_too_short": "Passwort muss mindestens 8 Zeichen lang sein",
+    "password_weak": "Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten",
+    "passwords_mismatch": "Passwörter stimmen nicht überein",
+    "terms_required": "Sie müssen die Nutzungsbedingungen akzeptieren",
+    "name_too_short": "Name muss mindestens 2 Zeichen lang sein"
+  },
+  "auth": {
+    "signup_title": "Konto erstellen",
+    "signup_subtitle": "Treten Sie der SauberNow Community bei",
+    "register_as": "Ich möchte mich registrieren als:",
+    "customer": "Kunde",
+    "cleaner": "Reinigungskraft",
+    "book_cleaning": "Reinigung buchen",
+    "find_jobs": "Jobs finden",
+    "full_name": "Vollständiger Name",
+    "phone_optional": "Telefonnummer (optional)",
+    "password": "Passwort",
+    "confirm_password": "Passwort bestätigen",
+    "password_hint": "Mindestens 8 Zeichen",
+    "repeat_password": "Passwort wiederholen",
+    "accept_terms": "Ich akzeptiere die",
+    "terms_conditions": "Nutzungsbedingungen",
+    "privacy_policy": "Datenschutzrichtlinie",
+    "and": "und",
+    "create_account": "Konto erstellen",
+    "creating_account": "Wird erstellt...",
+    "already_have_account": "Bereits ein Konto?",
+    "login_here": "Hier anmelden",
+    "personal_information": "Persönliche Informationen",
+    "register_as_cleaner": "Als Reinigungskraft registrieren"
   }
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -14,10 +15,12 @@ export default function LoginPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+  const { signIn } = useAuth();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -29,14 +32,21 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
-    // Simulate login process
-    setTimeout(() => {
-      console.log('Login attempt:', formData);
-      alert('Anmeldung erfolgreich!');
-      router.push(`/${locale}`);
+    try {
+      const { error } = await signIn(formData.email, formData.password);
+      
+      if (error) {
+        setError(error.message);
+      } else {
+        router.push(`/${locale}`);
+      }
+    } catch (err) {
+      setError('Ein unerwarteter Fehler ist aufgetreten');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -56,6 +66,12 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+                  {error}
+                </div>
+              )}
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

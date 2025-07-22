@@ -4,8 +4,8 @@ const withNextIntl = createNextIntlPlugin();
  
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
+  env: {
+    _next_intl_trailing_slash: 'never'
   },
   images: {
     domains: ['localhost'],
