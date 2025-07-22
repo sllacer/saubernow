@@ -43,7 +43,13 @@
     "contact": "Contact",
     "eco_friendly": "Eco-friendly",
     "pet_friendly": "Pet-friendly",
-    "deep_cleaning": "Deep cleaning"
+    "deep_cleaning": "Deep cleaning",
+    "verification_title": "Verification",
+    "verification_subtitle": "Trust is the foundation of our platform",
+    "next_steps": "Next Steps",
+    "video_call_info": "One of our administrators will contact you for a video call",
+    "email_details": "You will receive an email with further details about the verification process",
+    "trust_message": "We value trust - that's why our team conducts verification personally"
   },
   "common": {
     "loading": "Loading...",

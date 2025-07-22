@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { User, MapPin, Euro, Upload, Languages } from 'lucide-react';
+import { User, MapPin, Euro, Phone, Languages } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -22,10 +24,6 @@ type CleanerData = {
     languages: string[];
   };
   description: string;
-  documents: {
-    id?: File;
-    insurance?: File;
-  };
 };
 
 export default function BecomeCleanerPage() {
@@ -43,14 +41,55 @@ export default function BecomeCleanerPage() {
       specialties: [],
       languages: []
     },
-    description: '',
-    documents: {}
+    description: ''
   });
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({});
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
+  // Pre-fill form with user data if available
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push(`/${locale}/login`);
+      return;
+    }
+
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user, authLoading, locale, router]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      if (profile) {
+        setCleanerData(prev => ({
+          ...prev,
+          personalInfo: {
+            name: profile.full_name || '',
+            email: profile.email || user.email || '',
+            phone: profile.phone || ''
+          }
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+    }
+  };
 
   const validatePersonalField = (field: keyof CleanerData['personalInfo'], value: string): string => {
     switch (field) {
@@ -109,15 +148,6 @@ export default function BecomeCleanerPage() {
       : [...array, value];
   };
 
-  const handleFileUpload = (type: 'id' | 'insurance', file: File) => {
-    setCleanerData(prev => ({
-      ...prev,
-      documents: {
-        ...prev.documents,
-        [type]: file
-      }
-    }));
-  };
 
   const nextStep = () => {
     if (step < 4) setStep(step + 1);
@@ -129,10 +159,99 @@ export default function BecomeCleanerPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would submit to an API for manual verification
-    console.log('Cleaner registration:', cleanerData);
-    alert('Anmeldung erfolgreich! Wir werden Ihre Unterlagen prüfen und uns binnen 24-48 Stunden bei Ihnen melden.');
-    router.push(`/${locale}`);
+    
+    if (!user) {
+      setSubmitError('Sie müssen angemeldet sein, um sich als Reinigungskraft zu registrieren.');
+      return;
+    }
+
+    setLoading(true);
+    setSubmitError(null);
+
+    try {
+      // Update basic profile first
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          full_name: cleanerData.personalInfo.name,
+          phone: cleanerData.personalInfo.phone || null,
+          user_type: 'cleaner'
+        })
+        .eq('id', user.id);
+
+      if (profileError) throw profileError;
+
+      // Convert language display names to language codes
+      const languageCodes = cleanerData.workInfo.languages.map(lang => {
+        const langMap: { [key: string]: string } = {
+          'Deutsch': 'de',
+          'English': 'en',
+          'Italiano': 'it',
+          'Français': 'fr',
+          'Español': 'es',
+          'Hrvatski': 'hr'
+        };
+        return langMap[lang] || lang.toLowerCase();
+      });
+
+      // Convert availability to day codes
+      const availabilityDays = cleanerData.workInfo.availability.map(day => {
+        const dayMap: { [key: string]: string } = {
+          'Montag': 'monday',
+          'Dienstag': 'tuesday',
+          'Mittwoch': 'wednesday',
+          'Donnerstag': 'thursday',
+          'Freitag': 'friday',
+          'Samstag': 'saturday',
+          'Sonntag': 'sunday'
+        };
+        return dayMap[day] || day.toLowerCase();
+      });
+
+      // Create or update cleaner profile
+      const cleanerProfileData = {
+        id: user.id,
+        bio: cleanerData.description || null,
+        hourly_rate: cleanerData.workInfo.hourlyRate * 100, // Convert to cents
+        location_city: 'Salzburg', // Default for now
+        languages: languageCodes.length > 0 ? languageCodes : null,
+        services_offered: cleanerData.workInfo.specialties.length > 0 ? cleanerData.workInfo.specialties : ['regular_cleaning'],
+        availability_days: availabilityDays.length > 0 ? availabilityDays : null,
+        verification_status: 'pending',
+        is_active: true
+      };
+
+      // Try to insert first, if it fails due to existing record, update instead
+      const { error: insertError } = await supabase
+        .from('cleaners')
+        .insert(cleanerProfileData);
+
+      if (insertError) {
+        // If insert failed because record exists, update instead
+        if (insertError.code === '23505') { // Unique constraint violation
+          const { error: updateError } = await supabase
+            .from('cleaners')
+            .update(cleanerProfileData)
+            .eq('id', user.id);
+          
+          if (updateError) throw updateError;
+        } else {
+          throw insertError;
+        }
+      }
+
+      // For now, we'll skip file upload and just show success message
+      // In a real implementation, you'd upload files to Supabase Storage
+      
+      alert('Anmeldung erfolgreich! Wir werden Ihre Unterlagen prüfen und uns binnen 24-48 Stunden bei Ihnen melden.');
+      router.push(`/${locale}/profile`);
+      
+    } catch (err) {
+      console.error('Error submitting cleaner registration:', err);
+      setSubmitError('Es gab einen Fehler beim Speichern Ihrer Registrierung. Bitte versuchen Sie es erneut.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const serviceAreas = [
@@ -151,6 +270,27 @@ export default function BecomeCleanerPage() {
   const languageOptions = [
     'Deutsch', 'English', 'Italiano', 'Français', 'Español', 'Hrvatski'
   ];
+
+  if (authLoading) {
+    return (
+      <>
+        <Navigation />
+        <main className="min-h-screen bg-gray-50 py-8">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="animate-pulse">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+                <div className="space-y-4">
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -182,6 +322,12 @@ export default function BecomeCleanerPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-8">
               {t('auth.register_as_cleaner')}
             </h1>
+
+            {submitError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+                {submitError}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit}>
               {/* Step 1: Personal Information */}
@@ -433,61 +579,24 @@ export default function BecomeCleanerPage() {
                 </div>
               )}
 
-              {/* Step 4: Document Upload */}
+              {/* Step 4: Verification Information */}
               {step === 4 && (
                 <div className="space-y-6">
                   <div className="text-center mb-6">
-                    <Upload className="mx-auto text-primary-600 mb-3" size={48} />
-                    <h2 className="text-xl font-semibold">Dokumente hochladen</h2>
+                    <Phone className="mx-auto text-primary-600 mb-3" size={48} />
+                    <h2 className="text-xl font-semibold">{t('cleaner.verification_title')}</h2>
                     <p className="text-gray-600 mt-2">
-                      Für die Verifizierung benötigen wir folgende Dokumente
+                      {t('cleaner.verification_subtitle')}
                     </p>
                   </div>
 
-                  {/* ID Document */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ausweisdokument (Personalausweis oder Reisepass)
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload('id', e.target.files[0])}
-                      className="input-field"
-                      required
-                    />
-                    {cleanerData.documents.id && (
-                      <p className="text-sm text-green-600 mt-1">
-                        ✓ {cleanerData.documents.id.name}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Insurance Document */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Haftpflichtversicherung (optional, aber empfohlen)
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload('insurance', e.target.files[0])}
-                      className="input-field"
-                    />
-                    {cleanerData.documents.insurance && (
-                      <p className="text-sm text-green-600 mt-1">
-                        ✓ {cleanerData.documents.insurance.name}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Verification Info */}
+                  {/* Verification Information */}
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-blue-900 mb-2">Nächste Schritte:</h3>
+                    <h3 className="font-semibold text-blue-900 mb-2">{t('cleaner.next_steps')}:</h3>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Wir prüfen Ihre Unterlagen binnen 24-48 Stunden</li>
-                      <li>• Sie erhalten eine E-Mail mit dem Verifizierungsstatus</li>
-                      <li>• Nach erfolgreicher Verifizierung können Sie Aufträge annehmen</li>
+                      <li>• {t('cleaner.video_call_info')}</li>
+                      <li>• {t('cleaner.email_details')}</li>
+                      <li>• {t('cleaner.trust_message')}</li>
                     </ul>
                   </div>
 
@@ -497,10 +606,10 @@ export default function BecomeCleanerPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={!cleanerData.documents.id}
+                      disabled={loading}
                       className="btn-primary disabled:bg-gray-400"
                     >
-                      Registrierung abschließen
+                      {loading ? 'Speichere...' : 'Registrierung abschließen'}
                     </button>
                   </div>
                 </div>

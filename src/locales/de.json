@@ -43,7 +43,13 @@
     "contact": "Kontaktieren",
     "eco_friendly": "Umweltfreundlich",
     "pet_friendly": "Haustierfreundlich",
-    "deep_cleaning": "Tiefenreinigung"
+    "deep_cleaning": "Tiefenreinigung",
+    "verification_title": "Verifizierung",
+    "verification_subtitle": "Vertrauen ist die Basis unserer Plattform",
+    "next_steps": "Nächste Schritte",
+    "video_call_info": "Einer unserer Administratoren wird Sie für einen Video-Call kontaktieren",
+    "email_details": "Sie erhalten eine E-Mail mit weiteren Details zum Verifizierungsprozess",
+    "trust_message": "Wir schätzen Vertrauen - deshalb führt unser Team die Verifizierung persönlich durch"
   },
   "common": {
     "loading": "Laden...",
