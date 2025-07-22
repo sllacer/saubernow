@@ -68,6 +68,29 @@ This is currently in the planning/architecture phase with two main planning docu
 - **Primary Customer**: Busy urban professional (25-45, €40k+ income, Salzburg area)
 - **Primary Cleaner**: Local service provider (25-55, mix of professional/part-time)
 
+## Development Workflow
+
+### Git Commit Guidelines
+- **Always commit changes properly** following professional development practices
+- Run linting and type checking before committing (e.g., `npm run lint`, `npm run typecheck`)
+- Use conventional commit message format:
+  - `feat:` for new features
+  - `fix:` for bug fixes  
+  - `refactor:` for code refactoring
+  - `docs:` for documentation changes
+  - `style:` for formatting changes
+  - `test:` for test additions/modifications
+- Include meaningful commit messages that explain the "why" not just the "what"
+- Stage relevant files with `git add` before committing
+- Verify commit success with `git status` after committing
+- **IMPORTANT**: Proactively propose commits when logical groups of related changes are completed
+
+### Code Quality Standards
+- Ensure all tests pass before committing
+- Follow existing code conventions and patterns
+- Maintain consistent formatting and style
+- Add appropriate error handling and validation
+
 ## Important Considerations
 
 - Start with manual processes, automate gradually
