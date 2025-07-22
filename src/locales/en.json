@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "home": "Home",
+    "find_cleaner": "Find Cleaner",
+    "become_cleaner": "Become Cleaner",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "home": {
+    "hero_title": "Find Trusted Cleaners in Salzburg",
+    "hero_subtitle": "Book verified local cleaners with transparent pricing",
+    "cta_find": "Find Cleaner",
+    "cta_join": "Join as Cleaner",
+    "location_placeholder": "Enter your location",
+    "verified_cleaners": "Verified Cleaners",
+    "from_price": "from €{price}/hour"
+  },
+  "job": {
+    "post_title": "Describe Your Cleaning Needs",
+    "apartment_size": "Apartment Size",
+    "cleaning_type": "Cleaning Type",
+    "frequency": "Frequency",
+    "when_needed": "When Needed",
+    "description": "Additional Details",
+    "post_job": "Post Job",
+    "size_studio": "Studio (1 room)",
+    "size_2room": "2-room apartment",
+    "size_3room": "3-room apartment", 
+    "size_4room": "4+ room apartment",
+    "type_regular": "Regular cleaning",
+    "type_deep": "Deep cleaning",
+    "type_move": "Move-out cleaning",
+    "freq_weekly": "Weekly",
+    "freq_biweekly": "Every 2 weeks",
+    "freq_monthly": "Monthly",
+    "freq_once": "One-time"
+  },
+  "cleaner": {
+    "verified_badge": "Verified",
+    "languages": "Languages",
+    "specialties": "Specialties",
+    "rating": "Rating",
+    "contact": "Contact",
+    "eco_friendly": "Eco-friendly",
+    "pet_friendly": "Pet-friendly",
+    "deep_cleaning": "Deep cleaning"
+  },
+  "common": {
+    "loading": "Loading...",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "next": "Next",
+    "back": "Back",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address"
+  }
+}

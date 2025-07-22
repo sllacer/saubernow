@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "find_cleaner": "Reinigungskraft finden",
+    "become_cleaner": "Reinigungskraft werden",
+    "login": "Anmelden",
+    "signup": "Registrieren"
+  },
+  "home": {
+    "hero_title": "Vertrauensvolle Reinigungskräfte in Salzburg finden",
+    "hero_subtitle": "Buchen Sie verifizierte lokale Reinigungskräfte mit transparenter Preisgestaltung",
+    "cta_find": "Reinigungskraft finden",
+    "cta_join": "Als Reinigungskraft anmelden",
+    "location_placeholder": "Geben Sie Ihren Standort ein",
+    "verified_cleaners": "Verifizierte Reinigungskräfte",
+    "from_price": "ab €{price}/Stunde"
+  },
+  "job": {
+    "post_title": "Beschreiben Sie Ihren Reinigungsbedarf",
+    "apartment_size": "Wohnungsgröße",
+    "cleaning_type": "Art der Reinigung",
+    "frequency": "Häufigkeit",
+    "when_needed": "Wann benötigt",
+    "description": "Zusätzliche Details",
+    "post_job": "Auftrag veröffentlichen",
+    "size_studio": "Studio (1 Zimmer)",
+    "size_2room": "2-Zimmer-Wohnung",
+    "size_3room": "3-Zimmer-Wohnung",
+    "size_4room": "4+ Zimmer-Wohnung",
+    "type_regular": "Regelmäßige Reinigung",
+    "type_deep": "Tiefenreinigung",
+    "type_move": "Umzugsreinigung",
+    "freq_weekly": "Wöchentlich",
+    "freq_biweekly": "Alle 2 Wochen",
+    "freq_monthly": "Monatlich",
+    "freq_once": "Einmalig"
+  },
+  "cleaner": {
+    "verified_badge": "Verifiziert",
+    "languages": "Sprachen",
+    "specialties": "Spezialisierungen",
+    "rating": "Bewertung",
+    "contact": "Kontaktieren",
+    "eco_friendly": "Umweltfreundlich",
+    "pet_friendly": "Haustierfreundlich",
+    "deep_cleaning": "Tiefenreinigung"
+  },
+  "common": {
+    "loading": "Laden...",
+    "submit": "Absenden",
+    "cancel": "Abbrechen",
+    "next": "Weiter",
+    "back": "Zurück",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "address": "Adresse"
+  }
+}
