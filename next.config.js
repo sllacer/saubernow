@@ -8,7 +8,12 @@ const nextConfig = {
     _next_intl_trailing_slash: 'never'
   },
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
   },
 };
  

@@ -19,6 +19,7 @@
 *.pem
 salva-tasks.md
 requirements
+.claude
 
 
 # Debug

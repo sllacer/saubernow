@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, Globe, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -43,8 +44,15 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href={`/${locale}`} className="flex-shrink-0">
-              <span className="text-2xl font-bold text-primary-600">SauberNow</span>
+            <Link href={`/${locale}`} className="flex-shrink-0 flex items-center">
+              <Image
+                src="/saubernow-logo.png"
+                alt="SauberNow"
+                width={120}
+                height={40}
+                priority
+                className="h-8 w-auto"
+              />
             </Link>
           </div>
 

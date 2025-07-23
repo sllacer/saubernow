@@ -46,6 +46,7 @@ export default function FindCleanerPage() {
       setLoading(true);
       setError(null);
 
+      console.log('Fetching cleaners...');
       const { data, error } = await supabase
         .from('cleaners')
         .select(`
@@ -66,7 +67,19 @@ export default function FindCleanerPage() {
         .eq('is_active', true)
         .order('average_rating', { ascending: false });
 
-      if (error) throw error;
+      console.log('Query result:', { data, error });
+      
+      if (error) {
+        console.log('Primary query failed, trying debug query...');
+        // Debug: Try to get all cleaners to see if RLS is the issue
+        const { data: debugData, error: debugError } = await supabase
+          .from('cleaners')
+          .select('id, verification_status, is_active, profiles!inner(full_name)')
+          .limit(5);
+        
+        console.log('Debug query result:', { debugData, debugError });
+        throw error;
+      }
 
       // Transform the data to match our interface
       const transformedCleaners: Cleaner[] = data.map((cleaner: any) => ({
