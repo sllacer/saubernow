@@ -21,6 +21,8 @@ salva-tasks.md
 requirements
 .claude
 
+# SQL Files
+*.sql
 
 # Debug
 npm-debug.log*
