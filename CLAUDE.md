@@ -95,6 +95,15 @@ This is currently in the planning/architecture phase with two main planning docu
 - Verify commit success with `git status` after committing
 - **IMPORTANT**: Proactively propose commits when logical groups of related changes are completed
 
+### Git Branch Workflow
+
+- **ALWAYS pull latest changes** before creating any new branch: `git pull origin main`
+- Create new branches from main: `git checkout main && git pull origin main && git checkout -b feature/branch-name`
+- Use descriptive branch names following convention: `feature/`, `fix/`, `refactor/`, `docs/`
+- Keep feature branches up to date by regularly pulling main: `git pull origin main`
+- Never work on outdated code - always ensure you have the latest changes before starting work
+- Delete branches after merging to keep repository clean
+
 ### Code Quality Standards
 
 - Ensure all tests pass before committing

@@ -1,8 +1,8 @@
 # Salva's Independent Tasks - SauberNow Setup Guide
 
-## 🚀 Priority 1: Supabase Setup (Complete Before Next Coding Session)
+## 🚀 Priority 1: {Done} Supabase Setup (Complete Before Next Coding Session)
 
-### Step 1: Create Supabase Account
+### {Done} Step 1: Create Supabase Account
 
 1. Go to [supabase.com](https://supabase.com)
 2. Click "Start your project"

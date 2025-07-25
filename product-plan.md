@@ -67,7 +67,7 @@
 - **As a visitor**, I want to see available cleaners in my area immediately so I can gauge service availability
 - **As a visitor**, I want to enter just my location to see relevant cleaners without signup friction
 - **As a visitor**, I want to see cleaner profiles (photo, name, rating, lowest price rate, languages spoken) so I can assess quality and communication compatibility
-- **As a visitor**, I want to see verification status (verified badge) so I can trust the cleaner quality
+  As a visitor, I want to see verification badges and status badges (like Superhost) so I can identify quality cleaners
 
 #### Job Posting Flow (MyHammer-style)
 
@@ -117,12 +117,15 @@
 - **As a customer**, I want to see a "verified" badge on cleaner profiles so I trust they've been reviewed by the platform
 - **As a cleaner**, I want a simple verification process where I submit required documents for manual review
 - **As a cleaner**, I want to know my verification status and any missing requirements clearly
+- **As a cleaner**, I want to see my progress toward the next badge level with clear metrics and goals
+- **As a platform admin**, I want to verify cleaner documents and award verification badges efficiently
 - **As a platform admin**, I want to manually review cleaner documents and approve/reject applications
 - **As a platform admin**, I want a simple workflow to track pending verifications and communicate with cleaners
 
 #### Reviews & Ratings
 
 - **As a customer**, I want to rate and review cleaners after service completion
+- **As a customer**, I want to see status badges (Top Rated, Pro Cleaner, Rising Star) to identify exceptional cleaners
 - **As a cleaner**, I want to rate customers to build a mutual trust system
 - **As anyone**, I want to see authentic reviews with details about punctuality, quality, and communication
 - **As anyone**, I want to report problematic behavior with easy-to-use tools
