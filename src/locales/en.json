@@ -13,7 +13,15 @@
     "cta_join": "Join as Cleaner",
     "location_placeholder": "Enter your location",
     "verified_cleaners": "Verified Cleaners",
-    "from_price": "from €{price}/hour"
+    "from_price": "from €{price}/hour",
+    "search_cleaners": "Find Cleaners"
+  },
+  "search": {
+    "location-placeholder": "Enter location or ZIP code...",
+    "more-results-hint": "Keep typing for more precise results...",
+    "no-locations-found": "No locations found for \"{query}\"",
+    "distance-option": "{distance} radius",
+    "distance-hint": "Search radius for cleaners"
   },
   "job": {
     "post_title": "Describe Your Cleaning Needs",

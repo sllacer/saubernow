@@ -3,21 +3,31 @@
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Search, MapPin, Users, Shield, Star } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import CleanerCard from '@/components/CleanerCard';
+import LocationAutocomplete from '@/components/LocationAutocomplete';
 import { mockCleaners } from '@/lib/data';
+import { type AustrianLocation } from '@/lib/locationUtils';
 
 export default function HomePage() {
-  const [location, setLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<AustrianLocation | null>(null);
   const [showCleaners, setShowCleaners] = useState(false);
   const t = useTranslations();
   const locale = useLocale();
+  const router = useRouter();
 
-  const handleLocationSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (location.trim()) {
-      setShowCleaners(true);
+  const handleLocationSelect = (location: AustrianLocation) => {
+    setSelectedLocation(location);
+  };
+
+  const handleSearchSubmit = () => {
+    if (selectedLocation) {
+      const searchParams = new URLSearchParams({
+        location: selectedLocation.postalCode
+      });
+      router.push(`/${locale}/find-cleaner?${searchParams.toString()}`);
     }
   };
 
@@ -43,27 +53,22 @@ export default function HomePage() {
               </p>
               
               {/* Location Search Form */}
-              <form onSubmit={handleLocationSubmit} className="max-w-md mx-auto mb-8">
-                <div className="flex rounded-lg shadow-lg">
-                  <div className="relative flex-1">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder={t('home.location_placeholder')}
-                      className="input-field pl-10 rounded-l-lg rounded-r-none border-r-0"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-r-lg flex items-center space-x-2 transition-colors"
-                  >
-                    <Search size={20} />
-                  </button>
+              <div className="max-w-xl mx-auto mb-8">
+                <div className="mb-4">
+                  <LocationAutocomplete
+                    onLocationSelect={handleLocationSelect}
+                    placeholder={t('home.location_placeholder')}
+                  />
                 </div>
-              </form>
+                <button
+                  onClick={handleSearchSubmit}
+                  disabled={!selectedLocation}
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                >
+                  <Search size={20} />
+                  <span>{t('home.search_cleaners', { defaultValue: 'Reinigungskräfte finden' })}</span>
+                </button>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                 <Link href={`/${locale}/find-cleaner`} className="btn-primary">
@@ -114,31 +119,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Cleaners Section */}
-        {showCleaners && (
-          <section className="py-16 bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  {t('home.verified_cleaners')} in {location}
-                </h2>
-                <p className="text-gray-600">
-                  {mockCleaners.length} verfügbare Reinigungskräfte gefunden
-                </p>
-              </div>
-              
-              <div className="grid gap-6">
-                {mockCleaners.map((cleaner) => (
-                  <CleanerCard
-                    key={cleaner.id}
-                    cleaner={cleaner}
-                    onContact={() => handleContactCleaner(cleaner.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        {/* Cleaners Section - Removed from homepage as search redirects to find-cleaner page */}
 
         {/* Stats Section */}
         <section className="py-16 bg-primary-600">

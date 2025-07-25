@@ -13,7 +13,15 @@
     "cta_join": "Als Reinigungskraft anmelden",
     "location_placeholder": "Geben Sie Ihren Standort ein",
     "verified_cleaners": "Verifizierte Reinigungskräfte",
-    "from_price": "ab €{price}/Stunde"
+    "from_price": "ab €{price}/Stunde",
+    "search_cleaners": "Reinigungskräfte finden"
+  },
+  "search": {
+    "location-placeholder": "Ort oder PLZ eingeben...",
+    "more-results-hint": "Weiter tippen für präzisere Ergebnisse...",
+    "no-locations-found": "Keine Orte gefunden für \"{query}\"",
+    "distance-option": "{distance} Umkreis",
+    "distance-hint": "Suchradius für Reinigungskräfte"
   },
   "job": {
     "post_title": "Beschreiben Sie Ihren Reinigungsbedarf",

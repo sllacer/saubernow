@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { MapPin, Star, Euro, Search, Filter } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import LocationAutocomplete from '@/components/LocationAutocomplete';
 import { supabase } from '@/lib/supabase';
+import { austrianLocations, findExactLocation } from '@/lib/austrianLocations';
+import { type AustrianLocation } from '@/lib/locationUtils';
 
 interface Cleaner {
   id: string;
@@ -22,7 +26,7 @@ interface Cleaner {
 }
 
 export default function FindCleanerPage() {
-  const [searchLocation, setSearchLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<AustrianLocation | null>(null);
   const [selectedFilters, setSelectedFilters] = useState({
     priceRange: '',
     specialties: [],
@@ -30,16 +34,39 @@ export default function FindCleanerPage() {
     rating: ''
   });
   const [cleaners, setCleaners] = useState<Cleaner[]>([]);
+  const [filteredCleaners, setFilteredCleaners] = useState<Cleaner[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const t = useTranslations();
   const locale = useLocale();
+  const searchParams = useSearchParams();
+
+  // Handle URL parameters on page load
+  useEffect(() => {
+    const locationParam = searchParams.get('location');
+
+    if (locationParam) {
+      const location = findExactLocation(locationParam, austrianLocations);
+      if (location) {
+        setSelectedLocation(location);
+      }
+    }
+  }, [searchParams]);
 
   // Fetch cleaners from database
   useEffect(() => {
     fetchCleaners();
   }, []);
+
+  // Filter cleaners by location whenever selection changes
+  useEffect(() => {
+    if (selectedLocation && cleaners.length > 0) {
+      filterCleanersByLocation();
+    } else {
+      setFilteredCleaners(cleaners);
+    }
+  }, [selectedLocation, cleaners]);
 
   const fetchCleaners = async () => {
     try {
@@ -106,6 +133,30 @@ export default function FindCleanerPage() {
     }
   };
 
+  const filterCleanersByLocation = () => {
+    if (!selectedLocation) {
+      setFilteredCleaners(cleaners);
+      return;
+    }
+
+    // Simple location-based filtering - show cleaners in the same city or nearby
+    const filtered = cleaners.filter(cleaner => {
+      const cityMatch = cleaner.location_city.toLowerCase() === selectedLocation.city.toLowerCase();
+      const postalMatch = cleaner.location_postal_code === selectedLocation.postalCode;
+      // Also include nearby postal codes (simple proximity by postal code range)
+      const postalCodeProximity = selectedLocation.postalCode && cleaner.location_postal_code && 
+        Math.abs(parseInt(selectedLocation.postalCode) - parseInt(cleaner.location_postal_code)) <= 100;
+      
+      return cityMatch || postalMatch || postalCodeProximity;
+    });
+
+    setFilteredCleaners(filtered);
+  };
+
+  const handleLocationSelect = (location: AustrianLocation) => {
+    setSelectedLocation(location);
+  };
+
   // Helper functions for display
   const formatHourlyRate = (cents: number | null) => {
     if (!cents) return 'Preis auf Anfrage';
@@ -143,37 +194,47 @@ export default function FindCleanerPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Reinigungskräfte in Ihrer Nähe finden
+              {selectedLocation 
+                ? `Reinigungskräfte in ${selectedLocation.displayName}`
+                : 'Reinigungskräfte in Ihrer Nähe finden'
+              }
             </h1>
             <p className="text-lg text-gray-600">
-              Entdecken Sie verifizierte Reinigungskräfte in Salzburg
+              {selectedLocation && filteredCleaners.length > 0
+                ? `${filteredCleaners.length} verifizierte Reinigungskräfte in ${selectedLocation.displayName} gefunden`
+                : 'Entdecken Sie verifizierte Reinigungskräfte in Salzburg'
+              }
             </p>
           </div>
 
           {/* Search and Filters */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    placeholder="Standort eingeben (z.B. Salzburg Altstadt)"
-                    value={searchLocation}
-                    onChange={(e) => setSearchLocation(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                </div>
+            <div className="grid lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2">
+                <LocationAutocomplete
+                  onLocationSelect={handleLocationSelect}
+                  placeholder="Standort eingeben (z.B. Salzburg Altstadt)"
+                  initialValue={selectedLocation?.displayName || ''}
+                />
               </div>
-              <button className="btn-primary flex items-center space-x-2">
-                <Search size={20} />
-                <span>Suchen</span>
-              </button>
-              <button className="btn-secondary flex items-center space-x-2">
+              <button className="btn-secondary flex items-center justify-center space-x-2">
                 <Filter size={20} />
-                <span>Filter</span>
+                <span>Weitere Filter</span>
               </button>
             </div>
+            
+            {selectedLocation && (
+              <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+                <div>
+                  Suche in {selectedLocation.displayName}
+                </div>
+                {filteredCleaners.length < cleaners.length && (
+                  <div className="text-blue-600">
+                    {filteredCleaners.length} von {cleaners.length} Reinigungskräften angezeigt
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Results */}
@@ -205,13 +266,16 @@ export default function FindCleanerPage() {
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
                   {error}
                 </div>
-              ) : cleaners.length === 0 ? (
+              ) : filteredCleaners.length === 0 && !loading ? (
                 <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md">
-                  Keine verifizierten Reinigungskräfte gefunden. Versuchen Sie es später erneut.
+                  {selectedLocation 
+                    ? `Keine Reinigungskräfte in ${selectedLocation.displayName} gefunden. Versuchen Sie eine andere Stadt.`
+                    : 'Keine verifizierten Reinigungskräfte gefunden. Versuchen Sie es später erneut.'
+                  }
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {cleaners.map((cleaner) => (
+                  {filteredCleaners.map((cleaner) => (
                     <div key={cleaner.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
