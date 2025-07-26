@@ -12,7 +12,7 @@ function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
     <div 
       id={`testimonial-card-${testimonial.id}`}
-      className="testimonial-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 p-6 h-full border border-gray-100"
+      className="testimonial-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full border border-gray-100 hover:border-primary-200"
     >
       {/* Quote Icon */}
       <div className="testimonial-quote-icon-wrapper flex justify-center mb-4">
@@ -83,7 +83,9 @@ export default function TestimonialCarousel({ className = '' }: TestimonialCarou
         gap="gap-6"
         showArrows={true}
         showDots={false}
-        className="testimonial-carousel-wrapper px-8 sm:px-12"
+        showPartialItems={true}
+        fadeEdges={true}
+        className="testimonial-carousel-wrapper px-4 sm:px-8"
       >
         {mockTestimonials.map((testimonial) => (
           <TestimonialCard key={testimonial.id} testimonial={testimonial} />
