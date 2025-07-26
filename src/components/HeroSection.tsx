@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
-import { Shield, Heart, Award, ClipboardList, Search } from 'lucide-react';
+import { ClipboardList, Search } from 'lucide-react';
 import { CheckCircle } from 'lucide-react';
 import ProcessCarousel from './ProcessCarousel';
+import Image from 'next/image';
 
 interface HeroSectionProps {
   className?: string;
@@ -26,75 +27,85 @@ export default function HeroSection({ className = '' }: HeroSectionProps) {
       </div>
       
       <div className="hero-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="hero-content text-center">
-          {/* Trust Badge */}
-          <div className="hero-badge inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-lg">
-            <CheckCircle className="text-green-600" size={20} />
-            <span className="text-sm font-semibold text-gray-700">Salzburgs vertrauenswürdigste Reinigungsplattform</span>
-          </div>
-          
-          {/* Hero Headline */}
-          <h1 className="hero-headline text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Vertrauensvolle Reinigungskräfte 
-            <span className="text-primary-600"> in Ihrer Nähe</span>
-          </h1>
-          
-          {/* Hero Subtitle */}
-          <p className="hero-subtitle text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Finden Sie verifizierte, lokale Reinigungsprofis mit transparenten Bewertungen 
-            und fairen Preisen. Sicher, einfach, zuverlässig.
-          </p>
-
-          {/* Trust Stats */}
-          <div className="hero-stats grid grid-cols-3 gap-8 mb-12 max-w-2xl mx-auto">
-            <div className="hero-stat text-center">
-              <div className="hero-stat-content flex items-center justify-center mb-2">
-                <Shield className="text-primary-600 mr-2" size={24} />
-                <span className="text-3xl font-bold text-gray-900">50+</span>
+        <div className="hero-grid relative">
+          {/* Left Content */}
+          <div className="hero-content lg:w-2/3 text-center lg:text-left relative z-20 lg:pr-20">
+              {/* Trust Badge */}
+              <div className="hero-badge inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-lg">
+                <CheckCircle className="text-green-600" size={20} />
+                <span className="text-sm font-semibold text-gray-700">Salzburgs vertrauenswürdigste Reinigungsplattform</span>
               </div>
-              <p className="hero-stat-label text-sm text-gray-600">Verifizierte Experten</p>
-            </div>
-            <div className="hero-stat text-center">
-              <div className="hero-stat-content flex items-center justify-center mb-2">
-                <Heart className="text-red-500 mr-2" size={24} />
-                <span className="text-3xl font-bold text-gray-900">200+</span>
+              
+              {/* Hero Headline */}
+              <h1 className="hero-headline text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Vertrauensvolle Reinigungskräfte 
+                <span className="text-primary-600"> in Ihrer Nähe</span>
+              </h1>
+              
+              {/* Hero Subtitle */}
+              <p className="hero-subtitle text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none leading-relaxed">
+                Finden Sie verifizierte, lokale Reinigungsprofis mit transparenten Bewertungen 
+                und fairen Preisen. Sicher, einfach, zuverlässig.
+              </p>
+
+              {/* Hero CTAs */}
+              <div className="hero-ctas flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link 
+                  href={`/${locale}/post-job`} 
+                  className="hero-cta-primary inline-flex items-center justify-center space-x-3 bg-primary-600 hover:bg-primary-700 text-white font-bold px-8 py-4 text-lg rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 transform"
+                >
+                  <ClipboardList size={24} />
+                  <span>Reinigungsjob posten</span>
+                </Link>
+                <Link 
+                  href={`/${locale}/find-cleaner`} 
+                  className="hero-cta-secondary inline-flex items-center justify-center space-x-3 bg-white hover:bg-gray-50 border-2 border-primary-600 text-primary-600 font-bold px-8 py-4 text-lg rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 transform"
+                >
+                  <Search size={24} />
+                  <span>Direkt durchsuchen</span>
+                </Link>
               </div>
-              <p className="hero-stat-label text-sm text-gray-600">Zufriedene Kunden</p>
             </div>
-            <div className="hero-stat text-center">
-              <div className="hero-stat-content flex items-center justify-center mb-2">
-                <Award className="text-yellow-500 mr-2" size={24} />
-                <span className="text-3xl font-bold text-gray-900">4.8</span>
-              </div>
-              <p className="hero-stat-label text-sm text-gray-600">Durchschnittsbewertung</p>
+
+          {/* Right Image - Overlapping from the right */}
+          <div className="hero-image absolute right-0 top-0 lg:w-1/2 h-full flex items-center justify-end pr-8 hidden lg:flex">
+            <div className="hero-image-container relative">
+              <Image
+                src="/cleaner-image.png"
+                alt="Professional cleaner with cleaning tools"
+                width={400}
+                height={500}
+                className="w-full h-auto max-w-md object-contain drop-shadow-2xl"
+                priority
+              />
+              
+              {/* Floating elements */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-yellow-400 rounded-full blur-sm opacity-70"></div>
+              <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-primary-400 rounded-full blur-sm opacity-50"></div>
             </div>
           </div>
 
-          {/* Hero Process Carousel */}
-          <div className="hero-process mb-12">
-            <h3 className="hero-process-title text-2xl font-bold text-gray-900 text-center mb-8">
-              So einfach funktioniert's
-            </h3>
-            <ProcessCarousel className="hero-process-carousel" />
+          {/* Mobile Image */}
+          <div className="hero-image-mobile lg:hidden mt-8 flex justify-center">
+            <div className="hero-image-container relative">
+              <Image
+                src="/cleaner-image.png"
+                alt="Professional cleaner with cleaning tools"
+                width={300}
+                height={375}
+                className="w-full h-auto max-w-xs object-contain drop-shadow-2xl"
+                priority
+              />
+            </div>
           </div>
+        </div>
 
-          {/* Hero CTAs */}
-          <div className="hero-ctas flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href={`/${locale}/post-job`} 
-              className="hero-cta-primary inline-flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              <ClipboardList size={20} />
-              <span>Reinigungsjob posten</span>
-            </Link>
-            <Link 
-              href={`/${locale}/find-cleaner`} 
-              className="hero-cta-secondary inline-flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 border-2 border-primary-600 text-primary-600 font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              <Search size={20} />
-              <span>Direkt durchsuchen</span>
-            </Link>
-          </div>
+        {/* Hero Process Carousel - Full Width Below */}
+        <div className="hero-process mt-20">
+          <h3 className="hero-process-title text-2xl font-bold text-gray-900 text-center mb-8">
+            So einfach funktioniert's
+          </h3>
+          <ProcessCarousel className="hero-process-carousel" />
         </div>
       </div>
     </section>
