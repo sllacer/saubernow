@@ -275,7 +275,7 @@ export default function BecomeCleanerPage() {
     return (
       <>
         <Navigation />
-        <main className="min-h-screen bg-gray-50 py-8">
+        <main className="min-h-screen bg-gray-50 pt-20 pb-8">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="animate-pulse">
               <div className="bg-white rounded-lg shadow-md p-6">
@@ -296,7 +296,7 @@ export default function BecomeCleanerPage() {
     <>
       <Navigation />
       
-      <main className="min-h-screen bg-gray-50 py-8">
+      <main className="min-h-screen bg-gray-50 pt-20 pb-8">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Progress Indicator */}
           <div className="mb-8">
