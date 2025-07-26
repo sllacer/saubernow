@@ -1,9 +1,6 @@
 'use client';
 
-import { ClipboardList, Clock, UserCheck, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { useLocale } from 'next-intl';
-import Carousel from './Carousel';
+import { ClipboardList, Clock, UserCheck } from 'lucide-react';
 
 interface ProcessStep {
   id: string;
@@ -16,52 +13,55 @@ interface ProcessStep {
 
 interface ProcessCardProps {
   step: ProcessStep;
-  locale: string;
 }
 
-function ProcessCard({ step, locale }: ProcessCardProps) {
+function ProcessCard({ step }: ProcessCardProps) {
   return (
-    <Link href={`/${locale}${step.linkPath}`}>
-      <div 
-        id={`process-card-${step.id}`}
-        className="process-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 p-8 h-full border border-gray-100 cursor-pointer group relative overflow-hidden"
-      >
-        {/* Background Gradient Effect */}
-        <div className="process-card-background absolute inset-0 bg-gradient-to-br from-primary-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
-        {/* Step Number */}
-        <div className="process-card-header relative z-10 flex items-center justify-between mb-6">
-          <div className="process-step-number bg-primary-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-            {step.step}
+    <div 
+      id={`process-card-${step.id}`}
+      className="process-card relative w-80 h-64 cursor-pointer group perspective-1000"
+    >
+      <div className="process-card-inner relative w-full h-full transform-style-preserve-3d transition-transform duration-700 group-hover:rotate-y-180">
+        {/* Front Side - Title with Icon */}
+        <div className="process-card-front absolute inset-0 w-full h-full bg-white rounded-2xl shadow-xl border border-gray-100 backface-hidden flex items-center justify-center p-8">
+          <div className="text-center">
+            {/* Step Number Badge */}
+            <div className="process-step-number bg-primary-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold mx-auto mb-4">
+              {step.step}
+            </div>
+            
+            {/* Icon */}
+            <div className="process-card-icon-front bg-primary-100 rounded-2xl p-4 mx-auto mb-4 w-20 h-20 flex items-center justify-center">
+              <div className="text-primary-600">
+                {step.icon}
+              </div>
+            </div>
+            
+            {/* Title */}
+            <h3 className="process-card-title text-xl font-bold text-gray-900">
+              {step.title}
+            </h3>
           </div>
-          <ArrowRight className="process-card-arrow text-primary-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" size={20} />
         </div>
 
-        {/* Icon */}
-        <div className="process-card-icon-wrapper relative z-10 flex justify-center mb-6">
-          <div className="process-card-icon-container bg-primary-100 rounded-full p-4 group-hover:bg-primary-200 transition-colors duration-300">
-            {step.icon}
+        {/* Back Side - Description */}
+        <div className="process-card-back absolute inset-0 w-full h-full bg-primary-50 rounded-2xl shadow-xl border border-primary-200 backface-hidden rotate-y-180 flex items-center justify-center p-8">
+          <div className="text-center">
+            {/* Icon on back */}
+            <div className="process-card-icon-container bg-primary-100 rounded-2xl p-4 mx-auto mb-4 w-16 h-16 flex items-center justify-center">
+              <div className="text-primary-600">
+                {step.icon}
+              </div>
+            </div>
+            
+            {/* Description */}
+            <p className="process-card-description text-base text-gray-700 leading-relaxed">
+              {step.description}
+            </p>
           </div>
-        </div>
-
-        {/* Content */}
-        <div className="process-card-content relative z-10 text-center">
-          <h3 className="process-card-title text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-700 transition-colors duration-300">
-            {step.title}
-          </h3>
-          <p className="process-card-description text-gray-600 leading-relaxed">
-            {step.description}
-          </p>
-        </div>
-
-        {/* Bottom Action Hint */}
-        <div className="process-card-cta relative z-10 mt-6 pt-4 border-t border-gray-100 text-center">
-          <span className="process-card-cta-text text-sm text-primary-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Klicken zum Starten →
-          </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -70,7 +70,6 @@ interface ProcessCarouselProps {
 }
 
 export default function ProcessCarousel({ className = '' }: ProcessCarouselProps) {
-  const locale = useLocale();
 
   const processSteps: ProcessStep[] = [
     {
@@ -101,17 +100,11 @@ export default function ProcessCarousel({ className = '' }: ProcessCarouselProps
 
   return (
     <div id="process-carousel" className={`process-carousel ${className}`}>
-      <Carousel 
-        itemWidth="w-80 sm:w-96"
-        gap="gap-8"
-        showArrows={true}
-        showDots={false}
-        className="process-carousel-wrapper px-8 sm:px-12"
-      >
+      <div className="flex flex-wrap justify-center gap-6 px-4 lg:flex-nowrap lg:gap-8">
         {processSteps.map((step) => (
-          <ProcessCard key={step.id} step={step} locale={locale} />
+          <ProcessCard key={step.id} step={step} />
         ))}
-      </Carousel>
+      </div>
     </div>
   );
 }
