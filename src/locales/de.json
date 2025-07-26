@@ -4,7 +4,8 @@
     "find_cleaner": "Reinigungskraft finden",
     "become_cleaner": "Reinigungskraft werden",
     "login": "Anmelden",
-    "signup": "Registrieren"
+    "signup": "Registrieren",
+    "profile": "Profil"
   },
   "home": {
     "hero_title": "Vertrauensvolle Reinigungskräfte in Salzburg finden",
@@ -14,7 +15,13 @@
     "location_placeholder": "Geben Sie Ihren Standort ein",
     "verified_cleaners": "Verifizierte Reinigungskräfte",
     "from_price": "ab €{price}/Stunde",
-    "search_cleaners": "Reinigungskräfte finden"
+    "search_cleaners": "Reinigungskräfte finden",
+    "trust_badge": "Salzburgs vertrauenswürdigste Reinigungsplattform",
+    "hero_main_title": "Vertrauensvolle Reinigungskräfte",
+    "hero_title_highlight": "in Ihrer Nähe",
+    "hero_description": "Finden Sie verifizierte, lokale Reinigungsprofis mit transparenten Bewertungen und fairen Preisen. Sicher, einfach, zuverlässig.",
+    "cta_post_job": "Reinigungsjob posten",
+    "cta_browse": "Direkt durchsuchen"
   },
   "search": {
     "location-placeholder": "Ort oder PLZ eingeben...",
@@ -108,7 +115,12 @@
     "error_message": "Es gab einen Fehler beim Veröffentlichen des Auftrags. Bitte versuchen Sie es erneut.",
     "apartment_size_required": "Wohnungsgröße ist erforderlich",
     "cleaning_type_required": "Reinigungsart ist erforderlich",
-    "frequency_required": "Häufigkeit ist erforderlich"
+    "frequency_required": "Häufigkeit ist erforderlich",
+    "job_title_label": "Titel des Auftrags *",
+    "city_label": "Stadt *",
+    "postal_code_label": "Postleitzahl",
+    "budget_and_hours": "Budget & Arbeitsaufwand",
+    "description_placeholder": "Beschreiben Sie Ihre spezifischen Reinigungsanforderungen..."
   },
   "cleaner": {
     "verified_badge": "Verifiziert",
