@@ -197,7 +197,7 @@ export default function Navigation() {
                   className={`nav-mobile-profile-button flex items-center w-full ${navStyles.link} px-3 py-2 text-base font-medium text-left`}
                 >
                   <User size={16} className="nav-mobile-profile-icon mr-2" />
-                  <span className="nav-mobile-profile-text">{user ? 'Profil' : 'Anmelden'}</span>
+                  <span className="nav-mobile-profile-text">{user ? t('profile') : t('login')}</span>
                 </button>
               )}
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ClipboardList, Search } from 'lucide-react';
 import { CheckCircle } from 'lucide-react';
 import ProcessCarousel from './ProcessCarousel';
@@ -13,6 +13,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ className = '' }: HeroSectionProps) {
   const locale = useLocale();
+  const t = useTranslations('home');
 
   return (
     <section 
@@ -33,19 +34,18 @@ export default function HeroSection({ className = '' }: HeroSectionProps) {
               {/* Trust Badge */}
               <div className="hero-badge inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-lg border border-white/20">
                 <CheckCircle className="text-green-600" size={20} />
-                <span className="text-sm font-semibold text-white">Salzburgs vertrauenswürdigste Reinigungsplattform</span>
+                <span className="text-sm font-semibold text-white">{t('trust_badge')}</span>
               </div>
               
               {/* Hero Headline */}
               <h1 className="hero-headline text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-6 leading-tight">
-                Vertrauensvolle Reinigungskräfte 
-                <span className="text-primary-400"> in Ihrer Nähe</span>
+                {t('hero_main_title')}
+                <span className="text-primary-400"> {t('hero_title_highlight')}</span>
               </h1>
               
               {/* Hero Subtitle */}
               <p className="hero-subtitle text-xl text-gray-300 mb-8 max-w-2xl lg:max-w-none leading-relaxed">
-                Finden Sie verifizierte, lokale Reinigungsprofis mit transparenten Bewertungen 
-                und fairen Preisen. Sicher, einfach, zuverlässig.
+                {t('hero_description')}
               </p>
 
               {/* Hero CTAs */}
@@ -55,14 +55,14 @@ export default function HeroSection({ className = '' }: HeroSectionProps) {
                   className="hero-cta-primary inline-flex items-center justify-center space-x-3 bg-primary-600 hover:bg-primary-700 text-white font-bold px-8 py-4 text-lg rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 transform"
                 >
                   <ClipboardList size={24} />
-                  <span>Reinigungsjob posten</span>
+                  <span>{t('cta_post_job')}</span>
                 </Link>
                 <Link 
                   href={`/${locale}/find-cleaner`} 
                   className="hero-cta-secondary inline-flex items-center justify-center space-x-3 bg-white hover:bg-gray-50 border-2 border-primary-600 text-primary-600 font-bold px-8 py-4 text-lg rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 transform"
                 >
                   <Search size={24} />
-                  <span>Direkt durchsuchen</span>
+                  <span>{t('cta_browse')}</span>
                 </Link>
               </div>
             </div>

@@ -333,7 +333,7 @@ export default function PostJobPage() {
                   {/* Title */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Titel des Auftrags *
+                      {t('job.job_title_label')}
                     </label>
                     <input
                       type="text"
@@ -542,7 +542,7 @@ export default function PostJobPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Stadt *
+                          {t('job.city_label')}
                         </label>
                         <input
                           type="text"
@@ -556,7 +556,7 @@ export default function PostJobPage() {
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Postleitzahl
+                          {t('job.postal_code_label')}
                         </label>
                         <input
                           type="text"
@@ -612,7 +612,7 @@ export default function PostJobPage() {
                       onChange={(e) => updateJobData('description', e.target.value)}
                       rows={4}
                       className="input-field"
-                      placeholder="Beschreiben Sie Ihre spezifischen Reinigungsanforderungen..."
+                      placeholder={t('job.description_placeholder')}
                     />
                   </div>
 
@@ -641,7 +641,7 @@ export default function PostJobPage() {
                 <div className="space-y-6">
                   <h3 className="text-lg font-semibold text-gray-900">
                     <Euro className="inline mr-2" size={20} />
-                    Budget & Arbeitsaufwand
+                    {t('job.budget_and_hours')}
                   </h3>
 
                   {/* Estimated Hours */}
