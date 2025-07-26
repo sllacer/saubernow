@@ -6,6 +6,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import SearchSection from '@/components/SearchSection';
 import FeaturedCleanersSection from '@/components/FeaturedCleanersSection';
 import CTASection from '@/components/CTASection';
+import Footer from '@/components/Footer';
 
 export default function HomePage() {
   return (
@@ -19,6 +20,8 @@ export default function HomePage() {
         <FeaturedCleanersSection />
         <CTASection />
       </main>
+      
+      <Footer />
     </div>
   );
 }
