@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Menu, X, Globe, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginModal from './LoginModal';
 
@@ -17,7 +17,7 @@ export default function Navigation() {
   const t = useTranslations('navigation');
   const locale = useLocale();
   const router = useRouter();
-  const { user, signOut, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -33,15 +33,7 @@ export default function Navigation() {
     };
   }, []);
 
-  const toggleLocale = () => {
-    const newLocale = locale === 'de' ? 'en' : 'de';
-    window.location.href = `/${newLocale}${window.location.pathname.substring(3)}`;
-  };
 
-  const handleSignOut = async () => {
-    await signOut();
-    setIsUserMenuOpen(false);
-  };
 
   const handleProfileClick = () => {
     if (user) {
@@ -88,15 +80,6 @@ export default function Navigation() {
             >
               {t('become_cleaner')}
             </Link>
-            
-            <button
-              id="language-toggle"
-              onClick={toggleLocale}
-              className="nav-language-toggle flex items-center space-x-1 text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
-            >
-              <Globe size={16} className="nav-language-icon" />
-              <span className="nav-language-text">{locale.toUpperCase()}</span>
-            </button>
 
             {!loading && (
               <button
@@ -139,13 +122,6 @@ export default function Navigation() {
               >
                 {t('become_cleaner')}
               </Link>
-              <button
-                onClick={toggleLocale}
-                className="nav-mobile-language-toggle flex items-center space-x-2 text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium w-full text-left"
-              >
-                <Globe size={16} className="nav-mobile-language-icon" />
-                <span className="nav-mobile-language-text">{locale === 'de' ? 'English' : 'Deutsch'}</span>
-              </button>
               
               {!loading && (
                 <button
