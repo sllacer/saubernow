@@ -47,6 +47,11 @@
     transform: rotateY(180deg);
   }
   
+  /* Page Layout - Account for fixed navigation */
+  .page-with-nav {
+    @apply pt-16; /* Navigation height is h-16 (64px) */
+  }
+  
   .group:hover .group-hover\:rotate-y-180 {
     transform: rotateY(180deg);
   }
