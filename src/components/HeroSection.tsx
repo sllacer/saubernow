@@ -17,7 +17,7 @@ export default function HeroSection({ className = '' }: HeroSectionProps) {
   return (
     <section 
       id="hero-section" 
-      className={`hero-section bg-gradient-to-br from-primary-50 via-white to-blue-50 py-16 lg:py-24 relative overflow-hidden ${className}`}
+      className={`hero-section bg-gray-900 py-16 lg:py-24 relative overflow-hidden ${className}`}
     >
       {/* Background Pattern */}
       <div className="hero-background absolute inset-0 opacity-5">
@@ -31,19 +31,19 @@ export default function HeroSection({ className = '' }: HeroSectionProps) {
           {/* Left Content */}
           <div className="hero-content lg:w-2/3 text-center lg:text-left relative z-20 lg:pr-20">
               {/* Trust Badge */}
-              <div className="hero-badge inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-lg">
+              <div className="hero-badge inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-lg border border-white/20">
                 <CheckCircle className="text-green-600" size={20} />
-                <span className="text-sm font-semibold text-gray-700">Salzburgs vertrauenswürdigste Reinigungsplattform</span>
+                <span className="text-sm font-semibold text-white">Salzburgs vertrauenswürdigste Reinigungsplattform</span>
               </div>
               
               {/* Hero Headline */}
-              <h1 className="hero-headline text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="hero-headline text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-6 leading-tight">
                 Vertrauensvolle Reinigungskräfte 
-                <span className="text-primary-600"> in Ihrer Nähe</span>
+                <span className="text-primary-400"> in Ihrer Nähe</span>
               </h1>
               
               {/* Hero Subtitle */}
-              <p className="hero-subtitle text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none leading-relaxed">
+              <p className="hero-subtitle text-xl text-gray-300 mb-8 max-w-2xl lg:max-w-none leading-relaxed">
                 Finden Sie verifizierte, lokale Reinigungsprofis mit transparenten Bewertungen 
                 und fairen Preisen. Sicher, einfach, zuverlässig.
               </p>
@@ -100,13 +100,6 @@ export default function HeroSection({ className = '' }: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Hero Process Carousel - Full Width Below */}
-        <div className="hero-process mt-20">
-          <h3 className="hero-process-title text-2xl font-bold text-gray-900 text-center mb-8">
-            So einfach funktioniert's
-          </h3>
-          <ProcessCarousel className="hero-process-carousel" />
-        </div>
       </div>
     </section>
   );
