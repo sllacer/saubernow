@@ -5,27 +5,35 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Dialog, Transition } from '@headlessui/react';
-import { Mail, Lock, Eye, EyeOff, X } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, X, User, Phone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalProps) {
+  const [mode, setMode] = useState<'login' | 'register'>('login');
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: ''
+    phone: '',
+    password: '',
+    confirmPassword: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -34,36 +42,77 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }));
   };
 
+  const validateForm = () => {
+    if (mode === 'register') {
+      if (!formData.name.trim()) return t('auth.name_required');
+      if (!formData.email.trim()) return 'E-Mail ist erforderlich';
+      if (!formData.password) return 'Passwort ist erforderlich';
+      if (formData.password !== formData.confirmPassword) return t('auth.passwords_no_match');
+      if (formData.password.length < 6) return t('auth.password_min_length');
+      if (formData.phone && !isValidPhoneNumber(formData.phone)) return t('auth.invalid_phone');
+    } else {
+      if (!formData.email.trim()) return 'E-Mail ist erforderlich';
+      if (!formData.password) return 'Passwort ist erforderlich';
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await signIn(formData.email, formData.password);
+      let result;
       
-      if (error) {
-        setError(error.message);
+      if (mode === 'login') {
+        result = await signIn(formData.email, formData.password);
       } else {
-        // Close modal and stay on current page
-        onClose();
+        // Registration
+        const metadata = {
+          name: formData.name,
+          phone: formData.phone || null,
+          user_type: 'customer'
+        };
+        result = await signUp(formData.email, formData.password, metadata);
+      }
+      
+      if (result.error) {
+        setError(result.error.message);
+      } else {
         // Reset form
-        setFormData({ email: '', password: '' });
+        setFormData({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
         setError(null);
-        // Refresh current page to update auth state
-        router.refresh();
+        setMode('login');
+        // Call success callback if provided, otherwise close modal
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+          // Refresh current page to update auth state
+          router.refresh();
+        }
       }
     } catch (err) {
-      setError('Ein unerwarteter Fehler ist aufgetreten');
+      setError(t('auth.unexpected_error'));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleClose = () => {
-    setFormData({ email: '', password: '' });
+    setFormData({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
     setError(null);
     setShowPassword(false);
+    setShowConfirmPassword(false);
+    setMode('login');
     onClose();
   };
 
@@ -105,10 +154,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Header */}
                 <div className="text-center mb-8">
                   <Dialog.Title className="text-3xl font-bold text-gray-900 mb-2">
-                    Anmelden
+                    {mode === 'login' ? t('auth.login_title') : t('auth.register_title')}
                   </Dialog.Title>
                   <p className="text-gray-600">
-                    Willkommen zurück bei SauberNow
+                    {mode === 'login' 
+                      ? t('auth.login_subtitle') 
+                      : t('auth.register_subtitle')
+                    }
                   </p>
                 </div>
 
@@ -120,10 +172,30 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     </div>
                   )}
 
+                  {/* Name - Registration only */}
+                  {mode === 'register' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('auth.full_name_label')}
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => handleInputChange('name', e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder={t('auth.full_name_placeholder')}
+                          required={mode === 'register'}
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Email */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      E-Mail-Adresse
+                      {t('auth.email_label')}
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
@@ -132,16 +204,38 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="ihre@email.com"
+                        placeholder={t('auth.email_placeholder')}
                         required
                       />
                     </div>
                   </div>
 
+                  {/* Phone - Registration only */}
+                  {mode === 'register' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('auth.phone_label')}
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <PhoneInput
+                          country="AT"
+                          value={formData.phone}
+                          onChange={(value) => handleInputChange('phone', value || '')}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder={t('auth.phone_placeholder')}
+                          numberInputProps={{
+                            className: "w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Password */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Passwort
+                      {t('auth.password_label')}
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
@@ -150,7 +244,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="Ihr Passwort"
+                        placeholder={t('auth.password_placeholder')}
                         required
                       />
                       <button
@@ -161,26 +255,60 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
                     </div>
+                    {mode === 'register' && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {t('auth.password_min_chars')}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Remember me and Forgot password */}
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-600">
-                        Angemeldet bleiben
-                      </span>
-                    </label>
-                    <button
-                      type="button"
-                      className="text-sm text-primary-600 hover:text-primary-500"
-                    >
-                      Passwort vergessen?
-                    </button>
-                  </div>
+                  {/* Confirm Password - Registration only */}
+                  {mode === 'register' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('auth.confirm_password_label')}
+                      </label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          value={formData.confirmPassword}
+                          onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                          className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          placeholder={t('auth.confirm_password_placeholder')}
+                          required={mode === 'register'}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                        >
+                          {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Remember me and Forgot password - Login only */}
+                  {mode === 'login' && (
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-600">
+                          {t('auth.remember_me')}
+                        </span>
+                      </label>
+                      <button
+                        type="button"
+                        className="text-sm text-primary-600 hover:text-primary-500"
+                      >
+                        {t('auth.forgot_password')}
+                      </button>
+                    </div>
+                  )}
 
                   {/* Submit Button */}
                   <button
@@ -188,22 +316,28 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     disabled={isLoading}
                     className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isLoading ? 'Wird angemeldet...' : 'Anmelden'}
+                    {isLoading 
+                      ? (mode === 'login' ? t('auth.logging_in') : t('auth.registering')) 
+                      : (mode === 'login' ? t('auth.login_button') : t('auth.register_button'))
+                    }
                   </button>
                 </form>
 
-                {/* Sign up section */}
+                {/* Mode Toggle */}
                 <div className="text-center space-y-3 mt-8">
                   <p className="text-sm text-gray-600">
-                    Noch kein Konto?
+                    {mode === 'login' ? t('auth.no_account') : t('auth.have_account')}
                   </p>
-                  <Link
-                    href={`/${locale}/signup`}
-                    onClick={handleClose}
-                    className="w-full inline-block px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode(mode === 'login' ? 'register' : 'login');
+                      setError(null);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                   >
-                    Jetzt registrieren
-                  </Link>
+                    {mode === 'login' ? t('auth.register_now') : t('auth.switch_to_login')}
+                  </button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
